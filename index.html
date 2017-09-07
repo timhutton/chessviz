@@ -11,9 +11,9 @@ var total_moves = 7757121;
 
 function drawChessLine(x1,y1,x2,y2) {
     var sx1 = offset+(x1+0.5)*scale;
-    var sy1 = offset+(y1+0.5)*scale;
+    var sy1 = offset+(S-1-y1+0.5)*scale;
     var sx2 = offset+(x2+0.5)*scale;
-    var sy2 = offset+(y2+0.5)*scale;
+    var sy2 = offset+(S-1-y2+0.5)*scale;
     ctx.moveTo(sx1,sy1);
     ctx.lineTo(sx2,sy2);
 }
