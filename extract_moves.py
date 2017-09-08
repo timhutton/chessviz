@@ -24,14 +24,15 @@ total_moves = 0
 
 # Data source: http://chessdatabaseandmore.blogspot.co.uk/2017/05/my-software.html
 # Specifically: https://drive.google.com/file/d/0B3iWPBDH2o3kODd0ZGNMR3VtdDA/view?usp=sharing (1.4GB)
-with open("AepliBase.pgn") as pgn:
-    for i in range(10000):
+with open("../AepliBase.pgn") as pgn:
+    for i in range(1000000):
         if i%100 == 0:
             print i
         g = chess.pgn.read_game(pgn)
+        i_move = -1 # first one stored is not a move
         while not g.is_end():
             next_node = g.variations[0]
-            if not g.move is None:
+            if not g.move is None and i_move%2==0:
                 m = str(g.move)
                 x1 = ord(m[0])-ord('a')
                 y1 = int(m[1])-1
@@ -39,10 +40,11 @@ with open("AepliBase.pgn") as pgn:
                 y2 = int(m[3])-1
                 move_count[x1][y1][x2][y2] += 1
                 total_moves += 1
+            i_move += 1
             g = next_node
     
-print move_count
-print total_moves
+print 'var moves =',move_count,';'
+print 'var total_moves =',total_moves,';'
 
 # Example output from 100,000 games on AepliBase, 7,757,121 moves in total.
 '''
