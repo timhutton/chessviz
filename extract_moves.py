@@ -32,7 +32,7 @@ with open("../AepliBase.pgn") as pgn:
         i_move = -1 # first one stored is not a move
         while not g.is_end():
             next_node = g.variations[0]
-            if not g.move is None and i_move%2==0:
+            if not g.move is None and i_move%2==1:
                 m = str(g.move)
                 x1 = ord(m[0])-ord('a')
                 y1 = int(m[1])-1
