@@ -1,0 +1,138 @@
+<html>
+<body>
+
+<!--    Copyright 2018 Tim Hutton <tim.hutton@gmail.com>
+
+        This file is part of chessviz.
+
+        chessviz is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        chessviz is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with chessviz. If not, see <http://www.gnu.org/licenses/>          -->
+
+<canvas id="myCanvas" width="900" height="900" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script src="qanim_36000games_30moves.js"> </script>
+
+<script>
+
+function drawChessPiece(x,y,i,opacity) {
+    ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
+    ctx.font=scale+"px Verdana";
+    ctx.textAlign="center";
+    ctx.textBaseline = 'middle';
+    var piece = String.fromCharCode(0x2653+i);
+    var sx = offset+(x+0.5)*scale;
+    var sy = offset+(S-1-y+0.5)*scale;
+    ctx.beginPath();
+    ctx.fillText(piece,sx,sy);
+    ctx.fill();
+}
+
+function proportionToOpacity(p) {
+    return Math.min(1,p*20);
+}
+
+function drawGrid() {
+    ctx.strokeStyle = "rgba(0,0,0,0.3)";
+    ctx.beginPath();
+    ctx.rect(offset,offset,scale*S,scale*S);
+    for(var i = 1; i<S;i++ ){
+        ctx.moveTo(offset+i*scale,offset);
+        ctx.lineTo(offset+i*scale,offset+scale*S);
+        ctx.moveTo(offset,offset+i*scale);
+        ctx.lineTo(offset+scale*S,offset+i*scale);
+    }
+    ctx.stroke();
+}
+
+function drawBoard(moves,t) {
+    var iMove = Math.floor(t);
+    var u = t - iMove;
+    var total_moves = 0;
+    for(var iPiece = 0; iPiece < 12; iPiece++) {
+        var piece_moves = moves[iMove][iPiece];
+        for(var x1=0;x1<S;x1++) {
+            for(var y1=0;y1<S;y1++) {
+                for(var x2=0;x2<S;x2++) {
+                    for(var y2=0;y2<S;y2++) {
+                        total_moves += piece_moves[x1][y1][x2][y2];
+                    }
+                }
+            }
+        }
+    }
+    drawGrid();
+    for(var iPiece = 0; iPiece < 12; iPiece++) {
+        var piece_moves = moves[iMove][iPiece];
+        for(var x1=0;x1<S;x1++) {
+            for(var y1=0;y1<S;y1++) {
+                for(var x2=0;x2<S;x2++) {
+                    for(var y2=0;y2<S;y2++) {
+                        var num_moves = piece_moves[x1][y1][x2][y2];
+                        if( num_moves > 0 ) {
+                            var p = num_moves / total_moves;
+                            var opacity = proportionToOpacity(p);
+                            var x = u*x2 + (1-u)*x1;
+                            var y = u*y2 + (1-u)*y1;
+                            drawChessPiece(x,y,iPiece+1,opacity);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // draw move number
+    ctx.font="30px Verdana";
+    ctx.textAlign="left";
+    ctx.fillStyle = "rgb(0,0,0";
+    ctx.fillText(Math.floor(iMove/2)+1, offset+S*scale+15, offset);
+}
+
+function clear() {
+    ctx.fillStyle="rgb(255,255,255)";
+    ctx.beginPath();
+    ctx.fillRect(0,0,900,900);
+    ctx.fill();
+}
+
+// --------------------------------------------
+
+var scale = 70;
+var offset = 20;
+var S = 8; // squares on a side of a chessboard
+var ctx = document.getElementById("myCanvas").getContext("2d");
+
+// draw caption
+ctx.font="10px Verdana";
+ctx.textAlign="left";
+ctx.fillStyle = "rgba(0,0,0,0.6)";
+ctx.fillText("Source code: https://github.com/timhutton/chessviz", offset, offset+S*scale+15);
+
+var t = 0.0;
+var s = 0.005;
+function animate() {
+    clear();
+    drawBoard(moves,t);
+    t += s;
+    if( t > 8 ) { s = 0.5; }
+    if( t > 16 ) { s = 1; }
+    if( t < moves.length)
+        requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
