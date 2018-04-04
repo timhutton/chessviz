@@ -18,7 +18,7 @@
         You should have received a copy of the GNU General Public License
         along with chessviz. If not, see <http://www.gnu.org/licenses/>          -->
 
-<canvas id="myCanvas" width="900" height="900" style="border:1px solid #d3d3d3;">
+<canvas id="myCanvas" width="800" height="600" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
 <script src="qanim_36000games_30moves.js"> </script>
@@ -91,11 +91,13 @@ function drawBoard(moves,t) {
             }
         }
     }
-    // draw move number
-    ctx.font="30px Verdana";
-    ctx.textAlign="left";
-    ctx.fillStyle = "rgb(0,0,0";
-    ctx.fillText(Math.floor(iMove/2)+1, offset+S*scale+15, offset);
+    if(t>0) {
+        // draw move number
+        ctx.font="30px Verdana";
+        ctx.textAlign="left";
+        ctx.fillStyle = "rgb(0,0,0";
+        ctx.fillText(Math.floor(iMove/2)+1, offset+S*scale+15, offset);
+    }
 }
 
 function clear() {
@@ -112,20 +114,17 @@ var offset = 20;
 var S = 8; // squares on a side of a chessboard
 var ctx = document.getElementById("myCanvas").getContext("2d");
 
-// draw caption
-ctx.font="10px Verdana";
-ctx.textAlign="left";
-ctx.fillStyle = "rgba(0,0,0,0.6)";
-ctx.fillText("Source code: https://github.com/timhutton/chessviz", offset, offset+S*scale+15);
-
-var t = 0.0;
+var t = -1.0;
 var s = 0.005;
 function animate() {
     clear();
-    drawBoard(moves,t);
+    if(t<0)
+        drawBoard(moves,0);
+    else
+        drawBoard(moves,t);
     t += s;
-    if( t > 8 ) { s = 0.5; }
-    if( t > 16 ) { s = 1; }
+    if( t > 8 ) { s = 0.07; }
+    if( t > 24 ) { s = 1; }
     if( t < moves.length)
         requestAnimationFrame(animate);
 }
@@ -133,6 +132,8 @@ function animate() {
 animate();
 
 </script>
+
+<p>Source code: <a href="https://github.com/timhutton/chessviz">https://github.com/timhutton/chessviz</a></p>
 
 </body>
 </html>
